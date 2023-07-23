@@ -1,0 +1,4 @@
+2023-04-27 23:57:38.793  INFO 23093 --- [main] o.example.database.pool.ConnectionPool   : I am init
+2023-04-27 23:57:38.799  INFO 23093 --- [main] o.example.database.pool.ConnectionPool   : I am init
+2023-04-27 23:57:38.843  INFO 23093 --- [SpringApplicationShutdownHook] o.example.database.pool.ConnectionPool   : I am destroy
+2023-04-27 23:57:38.843  INFO 23093 --- [SpringApplicationShutdownHook] o.example.database.pool.ConnectionPool   : I am destroy

@@ -13,6 +13,8 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.history.RevisionRepository;
 
 import javax.persistence.LockModeType;
@@ -24,10 +26,11 @@ import java.util.Optional;
 public interface UserRepository extends
     JpaRepository<User, Long>,
     UserFilterRepository,
-    RevisionRepository<User, Long, Integer> {
+    RevisionRepository<User, Long, Integer>,
+    QuerydslPredicateExecutor<User> {
 
     @Query("select u from User u " +
-        "where u.firstname like %:firstname% and u.lastname like %:lastname%")
+           "where u.firstname like %:firstname% and u.lastname like %:lastname%")
     List<User> findAllBy(String firstname, String lastname);
 
     @Query(value = "SELECT u.* FROM users u WHERE u.username = :username",
@@ -44,10 +47,10 @@ public interface UserRepository extends
     <T> List<T> findAllByCompanyId(Integer companyId, Class<T> clazz);
 
     @Query(value = "SELECT firstname, " +
-        "lastname, " +
-        "birth_date birthDate " +
-        "FROM users " +
-        "WHERE company_id = :companyId",
+                   "lastname, " +
+                   "birth_date birthDate " +
+                   "FROM users " +
+                   "WHERE company_id = :companyId",
         nativeQuery = true)
     List<PersonalInfo> findAllByCompanyId(Integer companyId);
 

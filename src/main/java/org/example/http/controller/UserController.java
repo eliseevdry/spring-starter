@@ -2,11 +2,14 @@ package org.example.http.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.database.entity.Role;
+import org.example.dto.PageResponse;
 import org.example.dto.UserCreateEditDto;
 import org.example.dto.UserFilter;
 import org.example.dto.UserReadDto;
 import org.example.service.CompanyService;
 import org.example.service.UserService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +33,10 @@ public class UserController {
     private final CompanyService companyService;
 
     @GetMapping
-    public String findAll(Model model, UserFilter filter) {
-        model.addAttribute("users", userService.findAll(filter));
+    public String findAll(Model model, UserFilter filter, Pageable pageable) {
+        Page<UserReadDto> dtoPage = userService.findAll(filter, pageable);
+        model.addAttribute("users", PageResponse.of(dtoPage));
+        model.addAttribute("filter", filter);
         return "user/users";
     }
 

@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.example.dto.UserCreateEditDto.Fields.birthDate;
 import static org.example.dto.UserCreateEditDto.Fields.companyId;
 import static org.example.dto.UserCreateEditDto.Fields.firstname;
+import static org.example.dto.UserCreateEditDto.Fields.image;
 import static org.example.dto.UserCreateEditDto.Fields.lastname;
 import static org.example.dto.UserCreateEditDto.Fields.role;
 import static org.example.dto.UserCreateEditDto.Fields.username;
@@ -47,6 +48,7 @@ class UserControllerTest extends BaseIT {
                     .param(role, "USER")
                     .param(companyId, "1")
                     .param(birthDate, "2000-01-01")
+                        .param(image, "")
             )
             .andExpectAll(
                 status().is3xxRedirection(),

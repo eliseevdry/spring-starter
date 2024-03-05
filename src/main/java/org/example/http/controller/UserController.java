@@ -8,6 +8,8 @@ import org.example.dto.UserFilter;
 import org.example.dto.UserReadDto;
 import org.example.service.CompanyService;
 import org.example.service.UserService;
+import org.example.validation.group.CreateAction;
+import org.example.validation.group.UpdateAction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.groups.Default;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -62,7 +65,7 @@ public class UserController {
 
     @PostMapping
 //    @ResponseStatus(CREATED)
-    public String create(@ModelAttribute @Validated UserCreateEditDto user,
+    public String create(@ModelAttribute @Validated({Default.class, CreateAction.class}) UserCreateEditDto user,
                          BindingResult bindingResult,
                          RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -76,7 +79,8 @@ public class UserController {
     }
 
     @PostMapping("/{id}/update")
-    public String update(@PathVariable Long id, @ModelAttribute @Validated UserCreateEditDto user) {
+    public String update(@PathVariable Long id,
+                         @ModelAttribute @Validated({Default.class, UpdateAction.class}) UserCreateEditDto user) {
         return userService.update(id, user)
                 .map(it -> "redirect:/users/{id}")
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND));

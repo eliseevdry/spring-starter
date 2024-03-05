@@ -1,13 +1,17 @@
 package org.example.integration.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.example.database.entity.Role;
 import org.example.dto.UserCreateEditDto;
 import org.example.dto.UserReadDto;
 import org.example.integration.BaseIT;
 import org.example.service.UserService;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -36,18 +40,20 @@ public class UserServiceIT extends BaseIT {
         assertEquals(optionalUserReadDto.get().getUsername(), "ivan@gmail.com");
     }
 
+    @SneakyThrows
     @Test
     void create() {
         UserCreateEditDto userCreateEditDto =
-            new UserCreateEditDto("lexa@mail.ru", LocalDate.now(), "lexa", "voronov", Role.USER, COMPANY_1);
+            new UserCreateEditDto("lexa@mail.ru", LocalDate.now(), "lexa", "voronov", Role.USER, COMPANY_1, new MockMultipartFile("1", InputStream.nullInputStream()));
         UserReadDto userReadDto = userService.create(userCreateEditDto);
         assertEquals(userReadDto.getUsername(), "lexa@mail.ru");
     }
 
+    @SneakyThrows
     @Test
     void update() {
         UserCreateEditDto userCreateEditDto =
-            new UserCreateEditDto("lexa@mail.ru", LocalDate.now(), "lexa", "voronov", Role.USER, 1);
+            new UserCreateEditDto("lexa@mail.ru", LocalDate.now(), "lexa", "voronov", Role.USER, 1, new MockMultipartFile("2", InputStream.nullInputStream()));
 
         Optional<UserReadDto> optionalUserReadDto = userService.update(USER_1, userCreateEditDto);
         assertTrue(optionalUserReadDto.isPresent());

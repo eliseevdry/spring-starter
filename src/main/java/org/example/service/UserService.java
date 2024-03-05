@@ -1,6 +1,7 @@
 package org.example.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.example.database.querydsl.QPredicates;
 import org.example.database.repository.UserRepository;
 import org.example.dto.UserCreateEditDto;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,14 +27,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserReadMapper userReadMapper;
     private final UserCreateEditMapper userCreateEditMapper;
+    private final ImageService imageService;
 
     public Page<UserReadDto> findAll(UserFilter filter, Pageable pageable) {
         var predicate = QPredicates.builder()
-            .add(filter.firstname(), user.firstname::containsIgnoreCase)
-            .add(filter.lastname(), user.lastname::containsIgnoreCase)
-            .add(filter.birthDateAfter(), user.birthDate::after)
-            .add(filter.birthDateBefore(), user.birthDate::before)
-            .build();
+                .add(filter.firstname(), user.firstname::containsIgnoreCase)
+                .add(filter.lastname(), user.lastname::containsIgnoreCase)
+                .add(filter.birthDateAfter(), user.birthDate::after)
+                .add(filter.birthDateBefore(), user.birthDate::before)
+                .build();
 
         return userRepository.findAll(predicate, pageable).map(userReadMapper::map);
     }
@@ -48,29 +51,43 @@ public class UserService {
     @Transactional
     public UserReadDto create(UserCreateEditDto userCreateEditDto) {
         return Optional.of(userCreateEditDto)
-            .map(userCreateEditMapper::map)
-            .map(userRepository::save)
-            .map(userReadMapper::map)
-            .orElseThrow();
+                .map(dto -> {
+                            uploadImage(dto.getImage());
+                            return userCreateEditMapper.map(dto);
+                        }
+                )
+                .map(userRepository::save)
+                .map(userReadMapper::map)
+                .orElseThrow();
     }
 
     @Transactional
     public Optional<UserReadDto> update(Long id, UserCreateEditDto userCreateEditDto) {
         return Optional.of(id)
-            .map(userRepository::getById)
-            .map(user -> userCreateEditMapper.map(userCreateEditDto, user))
-            .map(userRepository::saveAndFlush)
-            .map(userReadMapper::map);
+                .map(userRepository::getById)
+                .map(user -> {
+                    uploadImage(userCreateEditDto.getImage());
+                    return userCreateEditMapper.map(userCreateEditDto, user);
+                })
+                .map(userRepository::saveAndFlush)
+                .map(userReadMapper::map);
+    }
+
+    @SneakyThrows
+    private void uploadImage(MultipartFile image) {
+        if (!image.isEmpty()) {
+            imageService.upload(image.getOriginalFilename(), image.getInputStream());
+        }
     }
 
     @Transactional
     public boolean delete(Long id) {
         return userRepository.findById(id)
-            .map(user -> {
-                userRepository.delete(user);
-                userRepository.flush();
-                return true;
-            })
-            .orElse(false);
+                .map(user -> {
+                    userRepository.delete(user);
+                    userRepository.flush();
+                    return true;
+                })
+                .orElse(false);
     }
 }

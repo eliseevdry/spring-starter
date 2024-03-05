@@ -6,8 +6,12 @@ import org.example.database.entity.User;
 import org.example.database.repository.CompanyRepository;
 import org.example.dto.UserCreateEditDto;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
 import java.util.Optional;
+
+import static java.util.function.Predicate.not;
 
 @Component
 @RequiredArgsConstructor
@@ -28,6 +32,12 @@ public class UserCreateEditMapper implements Mapper<UserCreateEditDto, User> {
         target.setLastname(source.getLastname());
         target.setRole(source.getRole());
         target.setCompany(getCompany(source.getCompanyId()));
+
+        Optional.ofNullable(source.getImage())
+                .filter(Objects::nonNull)
+                .filter(not(MultipartFile::isEmpty))
+                .ifPresent(image -> target.setImage(image.getOriginalFilename()));
+
         return target;
     }
 

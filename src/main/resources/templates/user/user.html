@@ -27,7 +27,7 @@
             <select id="company" name="companyId">
                 <option th:each="company : ${companies}"
                         th:value="${company.id()}"
-                        th:selected="${company.id() == user.company.id}"
+                        th:selected="${company.id() == user.company.id()}"
                         th:text="${company.name()}">Company
                 </option>
             </select>

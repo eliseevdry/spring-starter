@@ -1,7 +1,4 @@
-INSERT INTO company (id, name)
-VALUES (1, 'Google'),
-       (2, 'Meta'),
-       (3, 'Amazon');
+INSERT INTO company (id, name) VALUES (1, 'Google'),(2, 'Meta'),(3, 'Amazon');
 SELECT SETVAL('company_id_seq', (SELECT MAX(id) FROM company));
 
 INSERT INTO company_locales (company_id, lang, description)

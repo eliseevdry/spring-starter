@@ -29,7 +29,7 @@ public class GreetingController {
                         @ModelAttribute UserReadDto userReadDto,
                         @RequestParam(required = false) String game) {
         model.addAttribute("user", new UserReadDto(
-            1L, "Ivan", LocalDate.now(), "","", Role.USER, null));
+                1L, "Ivan", LocalDate.now(), "", "", "", Role.USER, null));
         model.addAttribute("game", game);
         return "greeting/hello";
     }

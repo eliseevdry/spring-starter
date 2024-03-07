@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.history.RevisionRepository;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.LockModeType;
 import javax.persistence.QueryHint;
@@ -62,4 +63,6 @@ public interface UserRepository extends
     @EntityGraph(attributePaths = {"company", "company.locales"})
     @Query(value = "select u from User u", countQuery = "select count(distinct u.firstname) from User u")
     Page<User> findAllBy(Pageable pageable);
+
+    Optional<User> findByUsername(String username);
 }

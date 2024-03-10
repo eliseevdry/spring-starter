@@ -77,8 +77,8 @@ public class UserController {
             return "redirect:/users/registration";
         }
 
-        UserReadDto userReadDto = userService.create(user);
-        return "redirect:/users/" + userReadDto.getId();
+        userService.create(user);
+        return "redirect:/login";
     }
 
     @PostMapping("/{id}/update")

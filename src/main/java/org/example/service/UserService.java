@@ -12,6 +12,7 @@ import org.example.mapper.UserCreateEditMapper;
 import org.example.mapper.UserReadMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -46,10 +47,13 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll(predicate, pageable).map(userReadMapper::map);
     }
 
+//    @PostFilter("filterObject.role.name().equals('USER')")
+//    @PostFilter("@companyService.findById(filterObject.company.id()).isPresent()")
     public List<UserReadDto> findAll() {
         return userRepository.findAll().stream().map(userReadMapper::map).toList();
     }
 
+    //    @PostAuthorize("returnObject")
     public Optional<UserReadDto> findById(Long id) {
         return userRepository.findById(id).map(userReadMapper::map);
     }

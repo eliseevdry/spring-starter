@@ -2,6 +2,9 @@ package org.example.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -81,6 +84,21 @@ public class FirstAspect {
             argNames = "id,transactional")
 //    @Before("execution(public * org.example.service.*Service.findById(*))")
     public void addLogging(JoinPoint joinPoint, Object id, Transactional transactional) {
-        log.info("invoked findById method in class {}, with id {}", joinPoint.getTarget(), id);
+        log.info("before - invoked findById method in class {}, with id {}", joinPoint.getTarget(), id);
+    }
+
+    @AfterReturning(value = "anyFindByIdServiceMethod() && args(id)", returning = "result")
+    public void loggingAfterReturning(Object result, Object id) {
+        log.info("after returning - invoked findById method with id {}, return {}", id, result);
+    }
+
+    @AfterThrowing(value = "anyFindByIdServiceMethod() && args(id)", throwing = "ex")
+    public void loggingAfterThrowing(Throwable ex, Object id) {
+        log.info("after throwing - invoked findById method with id {}, return exception {}", id, ex.getMessage());
+    }
+
+    @After(value = "anyFindByIdServiceMethod() && args(id)")
+    public void loggingAfter(Object id) {
+        log.info("after (finally) - invoked findById method with id {}", id);
     }
 }
